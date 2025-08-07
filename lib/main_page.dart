@@ -1,5 +1,9 @@
-import 'package:api_practice/Service/api_service.dart';
+import 'dart:convert';
+
+import 'package:api_practice/Service/network_caller.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -10,22 +14,34 @@ class MainPage extends StatefulWidget {
 //উত্তরঃ Application Programming interface মানে দুইটা সফটওয়্যার এর মধ্যে যোগাযোগ এর মাধ্যম।
 
 class _MainPageState extends State<MainPage> {
-  Map<String,dynamic>? user ;
-  bool isloading = true;
+  List<dynamic> userList = [];
+  bool _userListInProgress = false;
+
+  Future getUser() async {
+    _userListInProgress = true;
+    setState(() {});
+
+    final url = Uri.parse('https://jsonplaceholder.typicode.com/users');
+
+    final response = await get(url);
+
+    if (response.statusCode == 200) {
+      print(response.statusCode);
+      final jsonData = jsonDecode(response.body);
+      setState(() {
+        userList = jsonData;
+        _userListInProgress = false;
+      });
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadUser();
-  }
-
-  Future <void> loadUser()async{
-    final fetchUser = await ApiService().fetchUser();
-    setState(() {
-      user = fetchUser;
-      isloading = false;
-    });
+    getUser();
   }
 
   @override
@@ -33,28 +49,36 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.cyan,
-        title: Text('Api Calling Practice'),
+        title: Text('Api get method calling practice'),
       ),
-      body:isloading? Center(
-        child: CircularProgressIndicator(),
-      ) : user != null? Center(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(user!['picture']['large']),
-              ),
-              SizedBox(height: 20,),
-              Text('${user!['name']['first']}${user!['name']['last']}',
-                style: TextStyle(fontSize: 20),),
-              SizedBox(height: 10,),
-              Text('${user!['email']}'),
-
-            ],
-          ),
-      ):Text('No user data')
-
+      body: Visibility(
+        visible: _userListInProgress == false,
+        replacement: Center(child: CircularProgressIndicator()),
+        child: ListView.builder(
+            itemCount: userList.length,
+            itemBuilder: (context, index) {
+              final user = userList[index];
+              return ListTile(
+                title: Text(
+                  user['name'],
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+                subtitle: Text(
+                  user['email'],
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12,
+                      color: Colors.grey),
+                ),
+                leading: CircleAvatar(
+                  child: Text(user['name'][0]),
+                ),
+              );
+            }),
+      ),
     );
   }
 }
