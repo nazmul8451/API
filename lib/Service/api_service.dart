@@ -1,21 +1,23 @@
 import 'dart:convert';
+import 'package:api_practice/models/product_model.dart';
+import 'package:http/http.dart';
 
-import 'package:http/http.dart' as http;
 class ApiService{
-  Future<Map<String,dynamic>> fetchUser() async
-  {
-    //...
-    final url = Uri.parse('https://randomuser.me/api/');//মূলত এই লাইনে এ পি আই কল হচ্ছে
-    final response =  await http.get(url);// এটা দিয়ে ডেটা চাইলাম আমি URL এর কাছে
-    //...
-    if(response.statusCode == 200){
-      final data = json.decode(response.body);
-      return data['results'][0];
-    }
-    else{
-      throw Exception('Failed to load user');
-    }
+  static Future <List<ProductModel>?> getProduct() async {
+    final url = Uri.parse('https://fakestoreapi.com/products');
+    final response = await get(url);
 
-  }
+    if (response.statusCode == 200) {
+      print('Success');
+      final List<dynamic> jsonProduct = jsonDecode(response.body);
+      return jsonProduct.map((product) => ProductModel.fromJson(product)).toList();
+
+    } else {
+      print('Failed');
+      return null;
+    }
+  }//API integrate function..
+
+
 
 }

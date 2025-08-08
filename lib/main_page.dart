@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:api_practice/Service/network_caller.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -19,7 +17,7 @@ class _MainPageState extends State<MainPage> {
 
   Future getUser() async {
     _userListInProgress = true;
-    setState(() {});
+    setState((){});
 
     final url = Uri.parse('https://jsonplaceholder.typicode.com/users');
 
@@ -53,12 +51,17 @@ class _MainPageState extends State<MainPage> {
       ),
       body: Visibility(
         visible: _userListInProgress == false,
-        replacement: Center(child: CircularProgressIndicator()),
+        replacement: Center(
+            child: CircularProgressIndicator(
+              color: Colors.cyan,
+        )),
         child: ListView.builder(
             itemCount: userList.length,
             itemBuilder: (context, index) {
               final user = userList[index];
               return ListTile(
+
+                onTap: (){},
                 title: Text(
                   user['name'],
                   style: TextStyle(
