@@ -14,7 +14,7 @@ void main() {
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
-      builder: (context) => const MaterialApp(
+      builder: (context) => MaterialApp(
         useInheritedMediaQuery: true,
         debugShowCheckedModeBanner: false,
         home:GetMethod_UsingModel(),

@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:api_practice/Service/api_service.dart';
 import 'package:api_practice/models/product_model.dart';
+import 'package:api_practice/products_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class GetMethod_UsingModel extends StatefulWidget {
-  const GetMethod_UsingModel({super.key});
+  GetMethod_UsingModel({
+    super.key,
+  });
 
   @override
   State<GetMethod_UsingModel> createState() => _GetMethod_UsingModelState();
@@ -54,7 +57,13 @@ class _GetMethod_UsingModelState extends State<GetMethod_UsingModel> {
             itemBuilder: (context, index) {
               final product = productList[index];
               return ListTile(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProductsDetailsScreen(
+                              postId: product.id.toString())));
+                },
                 leading: Image.network(
                   product.image,
                   width: 50,
