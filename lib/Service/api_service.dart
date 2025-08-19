@@ -7,9 +7,26 @@ import 'package:http/http.dart';
 
 class ApiService {
 
+  List <Data> products = [];
 
-  ///that is all post get api link/
-  ///kivabe sob post get method use kore api te show kora jay seta...
+
+  Future<List<ProductModel>> fetchProducts () async {
+    final url = Uri.parse(Urls.readProductUrl);
+    final response = await get(url);
+    print(response.statusCode);
+
+    // if(response.statusCode == 200){
+    //   List jsonData = jsonDecode(response.body);
+    //   // ProductModel jsonProduct =ProductModel.fromJson(data);
+    //   return jsonData.map((product)=>ProductModel.fromJson(product)).toList();
+    // }else {
+    //   throw Exception('Failed to load products');
+    // }
+  }
+
+
+  // /that is all post get api link/
+  // /kivabe sob post get method use kore api te show kora jay seta...
   // static Future<List<ProductModel>?> getProduct() async {
   //   final url = Uri.parse(Urls.baseUrl);
   //   final response = await get(url);
@@ -24,21 +41,21 @@ class ApiService {
   //     print('Failed');
   //     return null;
   //   }
-  // } //API integrate function..
+  } //API integrate function..
 
-//that is single post access function
+// that is single post access function
 //   static Future<ProductDetailsModel?> getSinglePost(String id) async {
 //     final url = Uri.parse('${Urls.createPost}/$id');
 //     final response = await get(url);
-//
-//     // যদি আমরা সাকসেসফুলই এপি আই থেকে রেসপন্স পেয়ে যাই তাহলে নিচের এই লজিক টা কাজ করবে
-//     if (response.statusCode == 200) {
-//       final decodedData = jsonDecode(response.body);
-//       return ProductDetailsModel.fromJson(decodedData);
-//     } else {
-//       debugPrint('Something Error');
-//     }
-//   }
+
+  //   // যদি আমরা সাকসেসফুলই এপি আই থেকে রেসপন্স পেয়ে যাই তাহলে নিচের এই লজিক টা কাজ করবে
+  //   if (response.statusCode == 200) {
+  //     final decodedData = jsonDecode(response.body);
+  //     return ProductDetailsModel.fromJson(decodedData);
+  //   } else {
+  //     debugPrint('Something Error');
+  //   }
+  // }
 
   ///single post access korar api request
 

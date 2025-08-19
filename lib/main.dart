@@ -1,6 +1,6 @@
-import 'package:api_practice/gate_method_practiceUsing_model.dart';
 import 'package:api_practice/get_method_practice.dart';
 import 'package:api_practice/main_page.dart';
+import 'package:api_practice/product_item.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,7 @@ void main() {
       builder: (context) => MaterialApp(
         useInheritedMediaQuery: true,
         debugShowCheckedModeBanner: false,
-        home:GetMethod_UsingModel(),
+        home:ProductItem(),
       ), // runApp এর ভিতরে DevicePreview
     ),
   );

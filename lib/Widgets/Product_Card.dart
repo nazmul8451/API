@@ -1,12 +1,15 @@
+import 'package:api_practice/models/product_model.dart';
 import 'package:flutter/material.dart';
+
 class product_card extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
 
-
-  const product_card({
-    super.key, required this.onEdit, required this.onDelete,
+   product_card({
+    super.key,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
@@ -30,11 +33,23 @@ class product_card extends StatelessWidget {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Image.network('https://5.imimg.com/data5/KO/DN/MY-18579035/gym-dumble-1000x1000.jpg'),
-                    SizedBox(height: 3,),
-                    Text('Product Title',overflow: TextOverflow.ellipsis,),
-                    SizedBox(height: 2,),
-                    Text('Product Details',overflow: TextOverflow.ellipsis,maxLines: 2,),
+                    Image.network(
+                        'https://5.imimg.com/data5/KO/DN/MY-18579035/gym-dumble-1000x1000.jpg'),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    Text(
+                      'Product Title',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Text(
+                      'Product Details',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
                     SizedBox(
                       height: 3,
                     ),
@@ -43,12 +58,20 @@ class product_card extends StatelessWidget {
                       children: [
                         IconButton(
                           onPressed: onEdit,
-                          icon: Icon(Icons.edit,color: Colors.green,),
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.green,
+                          ),
                         ),
-                        SizedBox(width: 10,),
+                        SizedBox(
+                          width: 10,
+                        ),
                         IconButton(
                           onPressed: onDelete,
-                          icon: Icon(Icons.delete,color: Colors.red,),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
                         ),
                       ],
                     )
