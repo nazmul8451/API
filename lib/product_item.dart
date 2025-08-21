@@ -1,13 +1,15 @@
 import 'dart:convert';
-
 import 'package:api_practice/Add_new_product.dart';
 import 'package:api_practice/Urls/urls.dart';
 import 'package:api_practice/models/product_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class ProductItem extends StatefulWidget {
-  const ProductItem({super.key});
+  const ProductItem({
+    super.key,
+  });
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -57,13 +59,12 @@ class _ProductItemState extends State<ProductItem> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    // 👈 Child যতটুকু লাগে ততটুকু height নিবে
                     children: [
                       // Image Responsive
                       Flexible(
                         child: Image.network(
                           item['Img'],
-                          fit: BoxFit.fill, // 👈 Image size auto adjust হবে
+                          fit: BoxFit.fill,
                         ),
                       ),
                       const SizedBox(height: 5),
@@ -100,7 +101,26 @@ class _ProductItemState extends State<ProductItem> {
                           ),
                           const SizedBox(width: 10),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              final productId = item['_id'];
+                              bool isDeleted = await deleteProduct(productId);
+
+                              if (isDeleted) {
+                                print(isDeleted.runtimeType);
+                                setState(() {
+                                  product.removeAt(index);
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Product deleted successfully')));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content:
+                                            Text('Failed to delete product')));
+                              }
+                            },
                             icon: const Icon(Icons.delete, color: Colors.red),
                           ),
                         ],
@@ -125,6 +145,42 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
+  Future<bool> deleteProduct(String productId) async {
+    final url = Uri.parse(Urls.deleteProductUrl(productId));
+    final response = await get(url);
+
+    if (response.statusCode == 200) {
+      print("Deleted: $productId");
+      return true;
+    } else {
+      print("Delete failed: ${response.body}");
+      return false;
+    }
+  }
+
+  Future<List<ProductModel>?> createProducts(
+      String productName, String img, int price, String qty) async {
+    final url = Uri.parse(Urls.createProductUrl);
+    final response = await get(url);
+
+    if (response.statusCode == 200) {
+      itemIsLoading = true;
+      setState(() {});
+      print('Success');
+      final jsonProduct = jsonDecode(response.body);
+
+      final productList = jsonProduct['data'] as List;
+      // ProductModel jsonProduct =ProductModel.fromJson(data);
+      product = productList;
+      itemIsLoading = false;
+      setState(() {});
+
+      // return jsonProduct.map((product)=>ProductModel.fromJson(product)).toList();
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }
+
   Future<List<ProductModel>?> fetchProducts() async {
     final url = Uri.parse(Urls.readProductUrl);
     final response = await get(url);
@@ -133,12 +189,9 @@ class _ProductItemState extends State<ProductItem> {
       itemIsLoading = true;
       setState(() {});
       print('Success');
-      print(response.body.runtimeType);
       final jsonProduct = jsonDecode(response.body);
-      print(jsonProduct.runtimeType);
 
       final productList = jsonProduct['data'] as List;
-      print(productList.length);
       // ProductModel jsonProduct =ProductModel.fromJson(data);
       product = productList;
       itemIsLoading = false;
