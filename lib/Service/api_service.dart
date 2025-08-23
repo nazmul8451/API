@@ -10,19 +10,6 @@ class ApiService {
   List <Data> products = [];
 
 
-  Future<List<ProductModel>> fetchProducts () async {
-    final url = Uri.parse(Urls.readProductUrl);
-    final response = await get(url);
-    print(response.statusCode);
-
-    // if(response.statusCode == 200){
-    //   List jsonData = jsonDecode(response.body);
-    //   // ProductModel jsonProduct =ProductModel.fromJson(data);
-    //   return jsonData.map((product)=>ProductModel.fromJson(product)).toList();
-    // }else {
-    //   throw Exception('Failed to load products');
-    // }
-  }
 
 
   // /that is all post get api link/
