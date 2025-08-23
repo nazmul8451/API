@@ -19,11 +19,30 @@ class _ProductItemState extends State<ProductItem> {
   bool itemIsLoading = false;
   List<dynamic> product = [];
 
+  final _productNameController = TextEditingController();
+  final _imgController = TextEditingController();
+  final _qtyController = TextEditingController();
+  final _unitPriceController = TextEditingController();
+  final _totalPriceController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchProducts();
+    setState(() {
+      fetchProducts();
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _productNameController.dispose();
+    _imgController.dispose();
+    _qtyController.dispose();
+    _unitPriceController.dispose();
+    _totalPriceController.dispose();
+    super.dispose();
   }
 
   @override
@@ -134,8 +153,107 @@ class _ProductItemState extends State<ProductItem> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddNewProduct()));
+          showDialog(
+              context: context,
+              builder: (BuildContext dialogContext) {
+                return AlertDialog(
+                  title: Text(
+                    'Add Prodcut',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  content: SingleChildScrollView(
+                    child: Form(
+                      child: ListBody(
+                        children: [
+                          TextFormField(
+                            controller: _productNameController,
+                            decoration:
+                                const InputDecoration(hintText: 'Product Name'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter product name';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _imgController,
+                            decoration:
+                                const InputDecoration(hintText: 'Image URL'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter Image URL';
+                              } else if (!Uri.tryParse(value)!
+                                      .hasAbsolutePath ??
+                                  true) {
+                                return 'Please enter a valid URL';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _qtyController,
+                            decoration: const InputDecoration(
+                                hintText: 'Product quantity'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter product quantity';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _unitPriceController,
+                            decoration:
+                                const InputDecoration(hintText: 'Unit Price'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter product Unit price';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _totalPriceController,
+                            decoration:
+                                const InputDecoration(hintText: 'Total Price'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter product Total price';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Cancel')),
+                    ElevatedButton(
+                        onPressed: (){
+                          createProducts(
+                              _productNameController.text,
+                              _imgController.text,
+                              int.parse(_unitPriceController.text.trim()),
+                              int.parse(_totalPriceController.text.trim()),
+                              _qtyController.text.trim());
+                        },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green
+                      ),
+                        child: Text('Add',style: TextStyle(color: Colors.white),),
+
+                    )
+                  ],
+                );
+              });
         },
         child: Icon(
           Icons.add,
@@ -158,20 +276,26 @@ class _ProductItemState extends State<ProductItem> {
     }
   }
 
-  Future<List<ProductModel>?> createProducts(
-      String productName, String img, int price, String qty) async {
+  Future<List<ProductModel>?> createProducts(String productName, String img,
+      int unitPrice, int totalPrice, String qty) async {
     final url = Uri.parse(Urls.createProductUrl);
-    final response = await get(url);
-
-    if (response.statusCode == 200) {
+    final response = await post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "ProductName": productName,
+        "ProductCode": DateTime.now().microsecondsSinceEpoch,
+        "Img": img,
+        "Qty": qty,
+        "UnitPrice": unitPrice,
+        "TotalPrice": totalPrice,
+      }),
+    );
+    if (response.statusCode == 201) {
       itemIsLoading = true;
       setState(() {});
       print('Success');
-      final jsonProduct = jsonDecode(response.body);
-
-      final productList = jsonProduct['data'] as List;
-      // ProductModel jsonProduct =ProductModel.fromJson(data);
-      product = productList;
+      fetchProducts();
       itemIsLoading = false;
       setState(() {});
 
@@ -196,7 +320,6 @@ class _ProductItemState extends State<ProductItem> {
       product = productList;
       itemIsLoading = false;
       setState(() {});
-
       // return jsonProduct.map((product)=>ProductModel.fromJson(product)).toList();
     } else {
       throw Exception('Failed to load products');

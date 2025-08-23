@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:api_practice/Add_new_product.dart';
+import 'package:api_practice/Urls/urls.dart';
 import 'package:api_practice/Widgets/custom_TextFromField.dart';
+import 'package:api_practice/models/product_model.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class AddNewProduct extends StatefulWidget {
   const AddNewProduct({super.key});
@@ -118,7 +123,33 @@ class _AddNewProductState extends State<AddNewProduct> {
                 ),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: "Product price",
+                    hintText: "Product Total Price",
+                    fillColor: Colors.white, // Background color
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1), // Shadow color
+                      spreadRadius: 2, // How much the shadow spreads
+                      blurRadius: 5, // Smoothness of the shadow
+                      offset: Offset(2, 2), // Position of the shadow
+                    ),
+                  ],
+                ),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Product Total Price",
                     fillColor: Colors.white, // Background color
                     filled: true,
                     border: OutlineInputBorder(
@@ -135,6 +166,10 @@ class _AddNewProductState extends State<AddNewProduct> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: EdgeInsets.all(20)
+                ),
                   child: Text(
                     'Add Product',
                     style: TextStyle(
@@ -142,10 +177,6 @@ class _AddNewProductState extends State<AddNewProduct> {
                       fontSize: 15,
                     ),
                   ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: EdgeInsets.all(20)
-                ),
               ),
             ],
           ),
@@ -153,4 +184,7 @@ class _AddNewProductState extends State<AddNewProduct> {
       ),
     );
   }
+
+
+
 }
